@@ -12,11 +12,13 @@ namespace SysteMonitor
     class Program
     {
         private static bool keepGoing = true;
+        private static int memoryWarning = 0;
+        private static int cpuWarning = 0;
 
         static void Main(string[] args)
         {            
             SpeechSynthesizer speechSynth = new SpeechSynthesizer();
-            speechSynth.Speak("Welcome to System Monitor. Initializing. Cordinitts reeseeved. Reeseeving sistim data."); // english is a rough language for text to speech
+            speechSynth.Speak("Welcome to System Monitor.");
 
             #region Performance Counters            
             PerformanceCounter perfCPUCount = new PerformanceCounter("Processor Information", "% Processor Time", "_Total");
@@ -33,11 +35,30 @@ namespace SysteMonitor
                 Console.WriteLine("CPU Load:         {0}%", currentCPUPercentage);
                 Console.WriteLine("Available Memory: {0}MB", currentAvailableMemory);
                 Console.WriteLine("System Uptime: {0} seconds", (int)perfUptimeCount.NextValue());
+                Console.WriteLine();
+                Console.WriteLine();
 
-                string cpuLoadVocalMessage = String.Format("The current CPU load is {0} percent", currentCPUPercentage);
-                string memoryAvailableVocalMessage = String.Format("The current available memory is {0} megabytes.", currentAvailableMemory);
-                speechSynth.Speak(cpuLoadVocalMessage);
-                speechSynth.Speak(memoryAvailableVocalMessage);
+                if (currentCPUPercentage > 90)
+                {
+                    if (cpuWarning.ToString().EndsWith("0") || cpuWarning.ToString().EndsWith("5"))
+                    {
+                        string cpuLoadVocalMessage = String.Format("The current CPU load is {0} percent", currentCPUPercentage);
+                        speechSynth.Speak(cpuLoadVocalMessage);
+                    }
+
+                    cpuWarning++;
+                }
+
+                if (currentAvailableMemory < 800)
+                {
+                    if (memoryWarning.ToString().EndsWith("0"))
+                    {
+                        string memoryAvailableVocalMessage = String.Format("Warning. Your available memory is {0} megabytes.", currentAvailableMemory);
+                        speechSynth.Speak(memoryAvailableVocalMessage);
+                    }
+
+                    memoryWarning++;
+                }
 
                 Thread.Sleep(1000);
                 
