@@ -48,14 +48,14 @@ namespace SysteMonitor
                 {
                     if (cpuWarning.ToString().EndsWith("0") || cpuWarning.ToString().EndsWith("5"))
                     {
-                        speechSynth.Speak(String.Format("The current CPU load is {0} percent", currentCPUPercentage));
+                        speechSynth.Speak(String.Format("Attention. The current CPU load is {0} percent", currentCPUPercentage));
                     }
 
                     cpuWarning++;
                 }
 
                 // warning if memory drops below assigned threshold (set in the "if" loop below)
-                if (currentAvailableMemory < 800)
+                if (currentAvailableMemory < 500)
                 {
                     if (memoryWarning.ToString().EndsWith("0"))
                     {
